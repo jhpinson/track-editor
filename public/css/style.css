@@ -1,0 +1,68 @@
+.simplecolorpicker.icon {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+}
+.olTileImage {
+  max-width: none;
+  vertical-align: none;
+  border: none;
+}
+.separator {
+  height: 22px;
+  width: 2px;
+  background-color: #c4c4c4;
+}
+.olEditorControlPanelEditTrack {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  cursor: pointer;
+}
+.olEditorControlPanelEditTrack > div {
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 0 4px;
+  float: left;
+}
+.olEditorControlNewTrack {
+  position: absolute;
+  display: block;
+  right: 8px;
+  top: 8px;
+}
+.olEditorControlUpload {
+  position: absolute;
+  display: block;
+  top: 8px;
+  left: 250px;
+}
+.olEditorControlMyTracks,
+.olEditorControlLayerSwitcher {
+  position: absolute;
+  display: block;
+  top: 8px;
+}
+.olEditorControlMyTracks.olEditorControlMyTracks,
+.olEditorControlLayerSwitcher.olEditorControlMyTracks {
+  left: 50px;
+}
+.olEditorControlMyTracks.olEditorControlMyTracks > ul li div,
+.olEditorControlLayerSwitcher.olEditorControlMyTracks > ul li div {
+  float: right;
+}
+.olEditorControlMyTracks.olEditorControlMyTracks > ul li div a,
+.olEditorControlLayerSwitcher.olEditorControlMyTracks > ul li div a {
+  margin-left: 5px;
+}
+.olEditorControlMyTracks.olEditorControlLayerSwitcher,
+.olEditorControlLayerSwitcher.olEditorControlLayerSwitcher {
+  left: 150px;
+}
+.olEditorControlMyTracks > ul,
+.olEditorControlLayerSwitcher > ul {
+  list-style-type: none;
+  margin-top: 10px;
+  margin-left: 0;
+}

@@ -1,0 +1,203 @@
+<html>
+  <head>
+    <title><%= title %></title>
+
+    <link rel="stylesheet" href="/statics/vendor/bootstrap/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="/statics/vendor/bootstrap-editable/css/bootstrap-editable.css" type="text/css" />
+    <link rel="stylesheet" href="/statics/vendor/simplecolorpicker/jquery.simplecolorpicker.css" type="text/css" />
+    <link rel="stylesheet" href="/statics/vendor/messenger/build/css/messenger.css" type="text/css" />
+    <link rel="stylesheet" href="/statics/vendor/messenger/build/css/messenger-theme-future.css" type="text/css" />
+    <link rel="stylesheet" href="/statics/css/style.css" type="text/css" />
+
+    <script type="text/javascript" src="/statics/vendor/async.js"></script>
+    <script type="text/javascript" src="/statics/vendor/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="/statics/vendor/jquery.ui.widget.js"></script>
+    <script type="text/javascript" src="/statics/vendor/jquery.iframe-transport.js"></script>
+    <script type="text/javascript" src="/statics/vendor/jquery.fileupload.js"></script>
+    <script type="text/javascript" src="/statics/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/statics/vendor/bootbox.js"></script>
+    <script type="text/javascript" src="/statics/vendor/bootstrap-editable/js/bootstrap-editable.min.js"></script>
+    <script type="text/javascript" src="/statics/vendor/simplecolorpicker/jquery.simplecolorpicker.js"></script>
+    <script type="text/javascript" src="/statics/vendor/messenger/build/js/messenger.js"></script>
+    <script type="text/javascript" src="/statics/vendor/messenger/build/js/messenger-theme-future.js"></script>
+    <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
+    <script type="text/javascript" src="/statics/vendor/OpenLayers-2.12/lib/OpenLayers.js"></script>
+    <script type="text/javascript" src="/statics/js/CustomLayers.js"></script>
+    <script type="text/javascript" src="/statics/js/Editor/loader.js"></script>
+
+    <script type="text/javascript" src="/statics/vendor/jquery.ba-serializeobject.js"></script>
+    <script type="text/javascript" src="/statics/js/boostrap-modal-helper.js"></script>
+
+
+
+    <style>
+    .fileinput-button {
+        position: relative;
+        overflow: hidden;
+        float: left;
+        margin-right: 4px;
+      }
+      .fileinput-button input {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        opacity: 0;
+        filter: alpha(opacity=0);
+        transform: translate(-300px, 0) scale(4);
+        font-size: 23px;
+        direction: ltr;
+        cursor: pointer;
+      }
+    </style>
+
+    <script type="text/javascript">
+      var map, editeur;
+
+      function init () {
+        map = new OpenLayers.Map ('map', {
+          numZoomLevels: 20,
+          displayProjection: 'EPSG:4326',
+          //projection: 'EPSG:4326',
+          controls : [
+          new OpenLayers.Control.Navigation(),
+            new OpenLayers.Control.PanZoomBar (),
+          new OpenLayers.Control.LayerSwitcher(),
+          ],
+          layers: [
+            new OpenLayers.Layer.Google.Terrain      ('Google'),
+            new OpenLayers.Layer.Google              ('Google map',    {visibility: false}), // Cachées au début sinon, apparaissent fugitivement
+            new OpenLayers.Layer.Google.Photo        ('Google photo',  {visibility: false}),
+            new OpenLayers.Layer.Google.Hybrid       ('Google hybrid', {visibility: false}),
+
+            new OpenLayers.Layer.OSM                 ('OSM'),
+
+            // Demander une clé de production sur: http://pro.ign.fr/api-web => Service en ligne => S'ABONNER
+            new OpenLayers.Layer.IGN                 ('IGN',       'okmmxuvvc0i4no00eyvunx1g'),
+          ]
+        });
+        map.setCenter (
+          new OpenLayers.LonLat (2.4,47)
+            .transform (map.displayProjection, map.getProjectionObject()),
+          10
+        );
+
+        var editor = new OpenLayers.Editor(map);
+
+        // geolocation control
+        var geolocate = new OpenLayers.Control.Geolocate({
+            bind: true,
+            geolocationOptions: {
+                enableHighAccuracy: true,
+                maximumAge: 0,
+                timeout: 7000
+            }
+        });
+        map.addControl(geolocate);
+        geolocate.activate();
+      }
+
+      window.onload = function () {
+
+        Messenger.options = {
+          extraClasses: 'messenger-fixed messenger-on-bottom',
+          theme: 'future'
+        }
+
+        $.get('/user/_current', function (response, status) {
+          response = JSON.parse(response);
+          if (response == null) {
+            var $a = $('<a href="#none" rel="modal" data-href="#users-login-form"></a>');
+            $('body').append($a);
+            $a.click();
+          } else {
+            init();
+          }
+        });
+
+      }
+    </script>
+
+  </head>
+  <body style="margin:0px; height: 100%; width: 100%">
+    <div id="map" style="margin:0px; height: 100%; width: 100%"></div>
+
+    <!- Login form -->
+    <form class="form-horizontal" action="/login" >
+      <div id="users-login-form" class="modal hide fade">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h3>Authentification</h3>
+        </div>
+
+        <div class="modal-body">
+          <div class="control-group">
+            <label class="control-label" for="email">Adresse email</label>
+            <div class="controls">
+              <input type="text" name="email" id="email" placeholder="Adresse email">
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="password">Mot de passe</label>
+            <div class="controls">
+              <input type="password" name="password" id="password" placeholder="Mot de passe">
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="controls">
+              <label class="checkbox">
+                <input name="remember" type="checkbox"> Se souvenir de moi
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#none" rel="modal" data-href="#users-creation-form" class="">Créer mon compte</a>
+          <a href="#none" class="btn">Annuler</a>
+          <button type="submit" class="btn btn-primary">Valider</button>
+        </div>
+      </div>
+    </form>
+
+    <!- Create account form -->
+    <form class="form-horizontal" action="/user/register" >
+      <div id="users-creation-form" class="modal hide fade">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h3>Création de compte</h3>
+        </div>
+
+        <div class="modal-body">
+
+          <div class="control-group">
+            <label class="control-label" for="fullname">Mot de passe</label>
+            <div class="controls">
+              <input type="text" name="fullname" id="fullname" placeholder="Nom">
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="email">Adresse email</label>
+            <div class="controls">
+              <input type="text" name="email" id="email" placeholder="Adresse email">
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="password">Mot de passe</label>
+            <div class="controls">
+              <input type="password" name="password" id="password" placeholder="Mot de passe">
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <a href="#none" data-dismiss="modal"  class="">J'ai déja un compte</a>
+          <a href="#none" class="btn">Annuler</a>
+          <button type="submit" class="btn btn-primary">Valider</button>
+        </div>
+      </div>
+    </form>
+
+  </body>
+</html>
