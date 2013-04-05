@@ -3,6 +3,11 @@ var fs = require('fs'), http = require('http'), querystring = require('querystri
 var tracks = require('../libs/models/tracks');
 
 var save = function (req, response) {
+  if (typeof(req.user) == 'undefined')  {
+    response.statusCode = 401;
+    response.end();
+    return;
+  }
 
   var data = req.body;
   var res = {success : false, error : null, content : null}
@@ -17,7 +22,14 @@ var save = function (req, response) {
   });
 }
 
+
 var remove = function (req, res) {
+  if (typeof(req.user) == 'undefined')  {
+    response.statusCode = 401;
+    response.end();
+    return;
+  }
+
   var data = req.body;
   tracks.remove(data, function (err) {
     res.end(JSON.stringify({success:(err === null)}));
@@ -25,6 +37,13 @@ var remove = function (req, res) {
 }
 
 var list = function(req, res){
+
+  if (typeof(req.user) == 'undefined')  {
+    response.statusCode = 401;
+    response.end();
+    return;
+  }
+
   tracks.filter({}, function (err, results) {
     res.end(JSON.stringify(results));
   })

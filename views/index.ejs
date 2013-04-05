@@ -20,6 +20,8 @@
     <script type="text/javascript" src="/statics/vendor/simplecolorpicker/jquery.simplecolorpicker.js"></script>
     <script type="text/javascript" src="/statics/vendor/messenger/build/js/messenger.js"></script>
     <script type="text/javascript" src="/statics/vendor/messenger/build/js/messenger-theme-future.js"></script>
+    <script type="text/javascript" src="/statics/vendor/nod.js"></script>
+
     <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
     <script type="text/javascript" src="/statics/vendor/OpenLayers-2.12/lib/OpenLayers.js"></script>
     <script type="text/javascript" src="/statics/js/CustomLayers.js"></script>
@@ -27,7 +29,8 @@
 
     <script type="text/javascript" src="/statics/vendor/jquery.ba-serializeobject.js"></script>
     <script type="text/javascript" src="/statics/js/boostrap-modal-helper.js"></script>
-
+    <script type="text/javascript" src="/statics/js/auth.js"></script>
+    <script type="text/javascript" src="/statics/js/modal/users-register.js"></script>
 
 
     <style>
@@ -54,7 +57,7 @@
     <script type="text/javascript">
       var map, editeur;
 
-      function init () {
+      function init (user) {
         map = new OpenLayers.Map ('map', {
           numZoomLevels: 20,
           displayProjection: 'EPSG:4326',
@@ -82,7 +85,7 @@
           10
         );
 
-        var editor = new OpenLayers.Editor(map);
+        var editor = new OpenLayers.Editor(map, user);
 
         // geolocation control
         var geolocate = new OpenLayers.Control.Geolocate({
@@ -96,26 +99,20 @@
         map.addControl(geolocate);
         geolocate.activate();
       }
-
-      window.onload = function () {
+      $(window).load(function() {
 
         Messenger.options = {
           extraClasses: 'messenger-fixed messenger-on-bottom',
           theme: 'future'
         }
-
-        $.get('/user/_current', function (response, status) {
-          response = JSON.parse(response);
-          if (response == null) {
-            var $a = $('<a href="#none" rel="modal" data-href="#users-login-form"></a>');
-            $('body').append($a);
-            $a.click();
-          } else {
-            init();
+        initAjaxAuth();
+        $.get('/auth/current', function (user, status) {
+          if (status == "success") {
+            init(user);
           }
         });
 
-      }
+      });
     </script>
 
   </head>
@@ -123,81 +120,85 @@
     <div id="map" style="margin:0px; height: 100%; width: 100%"></div>
 
     <!- Login form -->
-    <form class="form-horizontal" action="/login" >
-      <div id="users-login-form" class="modal hide fade">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h3>Authentification</h3>
-        </div>
 
-        <div class="modal-body">
-          <div class="control-group">
-            <label class="control-label" for="email">Adresse email</label>
-            <div class="controls">
-              <input type="text" name="email" id="email" placeholder="Adresse email">
+      <div id="users-login-form" class="modal hide fade" data-keyboard="false" data-backdrop="static">
+        <form  class="form-horizontal" action="/auth/login" >
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Authentification</h3>
+          </div>
+
+          <div class="modal-body">
+            <div class="control-group">
+              <label class="control-label" for="email">Adresse email</label>
+              <div class="controls">
+                <input type="text" data-nod="email" name="email" id="email" placeholder="Adresse email">
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label" for="password">Mot de passe</label>
+              <div class="controls">
+                <input type="password" data-nod="min-length:8" name="password" id="password" placeholder="Mot de passe">
+              </div>
+            </div>
+            <div class="control-group">
+              <div class="controls">
+                <label class="checkbox">
+                  <input name="remember" type="checkbox"> Se souvenir de moi
+                </label>
+              </div>
             </div>
           </div>
-          <div class="control-group">
-            <label class="control-label" for="password">Mot de passe</label>
-            <div class="controls">
-              <input type="password" name="password" id="password" placeholder="Mot de passe">
-            </div>
+          <div class="modal-footer">
+            <a href="#none" data-href="#users-creation-form" class="">Créer mon compte</a>
+            <a href="#none" data-dismiss="modal" class="btn">Annuler</a>
+            <button type="submit" class="btn btn-primary" disabled="disabled">Valider</button>
           </div>
-          <div class="control-group">
-            <div class="controls">
-              <label class="checkbox">
-                <input name="remember" type="checkbox"> Se souvenir de moi
-              </label>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <a href="#none" rel="modal" data-href="#users-creation-form" class="">Créer mon compte</a>
-          <a href="#none" class="btn">Annuler</a>
-          <button type="submit" class="btn btn-primary">Valider</button>
-        </div>
+        </form>
       </div>
-    </form>
+
+
 
     <!- Create account form -->
-    <form class="form-horizontal" action="/user/register" >
+
       <div id="users-creation-form" class="modal hide fade">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h3>Création de compte</h3>
-        </div>
-
-        <div class="modal-body">
-
-          <div class="control-group">
-            <label class="control-label" for="fullname">Mot de passe</label>
-            <div class="controls">
-              <input type="text" name="fullname" id="fullname" placeholder="Nom">
-            </div>
+        <form class="form-horizontal" action="/auth/register" >
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Création de compte</h3>
           </div>
 
-          <div class="control-group">
-            <label class="control-label" for="email">Adresse email</label>
-            <div class="controls">
-              <input type="text" name="email" id="email" placeholder="Adresse email">
-            </div>
-          </div>
+          <div class="modal-body">
 
-          <div class="control-group">
-            <label class="control-label" for="password">Mot de passe</label>
-            <div class="controls">
-              <input type="password" name="password" id="password" placeholder="Mot de passe">
+            <div class="control-group">
+              <label class="control-label" for="username">Nom</label>
+              <div class="controls">
+                <input data-nod="min-length:5" type="text" name="username" id="users-creation-form-username" placeholder="Nom">
+              </div>
             </div>
-          </div>
 
-        </div>
-        <div class="modal-footer">
-          <a href="#none" data-dismiss="modal"  class="">J'ai déja un compte</a>
-          <a href="#none" class="btn">Annuler</a>
-          <button type="submit" class="btn btn-primary">Valider</button>
-        </div>
+            <div class="control-group">
+              <label class="control-label" for="email">Adresse email</label>
+              <div class="controls">
+                <input type="text" data-nod="email" name="email" id="users-creation-form-email" placeholder="Adresse email">
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label class="control-label" for="password">Mot de passe</label>
+              <div class="controls">
+                <input type="password" data-nod="min-length:8" name="password" id="users-creation-form-password" placeholder="Mot de passe">
+              </div>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <a href="#none" data-dismiss="modal" class="btn">Annuler</a>
+            <button type="submit" class="btn btn-primary" disabled="disabled">Valider</button>
+          </div>
+        </form>
       </div>
-    </form>
+
 
   </body>
 </html>

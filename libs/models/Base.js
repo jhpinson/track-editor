@@ -74,8 +74,7 @@ var Base = function(options) {
 
   return {
     save: function(data, callback) {
-
-      if (data['@rid'] === null) {
+      if (data['@rid'] === null || typeof(data['@rid']) == 'undefined') {
         // create
         delete data['@rid'];
         database.db.createVertex(data, {
@@ -88,7 +87,6 @@ var Base = function(options) {
           }
         });
       } else {
-
         database.db.command("UPDATE " + data['@rid'] + " " + hashToSQLSets(data).sqlsets, function(err, result) {
           if (err === null) {
             callback(null, result)
@@ -114,7 +112,9 @@ var Base = function(options) {
       database.db.command("SELECT from " + storageClass + " " + hashToSQLWhere(options).sqlwhere, function(err, results) {
         if (err === null) {
           if (results.length  > 1) {
-            callback(null, false)
+            callback('MultipleObjectReturned')
+          } else if (results.length  == 0) {
+            callback('ObjectDoesnotExist')
           } else {
             callback(null, results[0])
           }

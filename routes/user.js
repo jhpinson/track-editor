@@ -1,19 +1,17 @@
 var users = require('../libs/models/users');
 
 
-var current = function(req, res) {
 
-  if (typeof(req.user) !== 'undefined') {
-    data = req.user;
-  } else {
-    data = null;
-  }
-  res.end(JSON.stringify(data));
-};
 
 
 var save = function(req, response) {
 
+  if (typeof(req.user) == 'undefined')  {
+    response.statusCode = 401;
+    response.end();
+    return;
+  }
+
   var data = req.body;
   var res = {
     success: false,
@@ -29,33 +27,14 @@ var save = function(req, response) {
     } else {
       res.error = err;
     }
-    response.end(JSON.stringify(res));
+    response.send(res);
   })
 }
 
-var register = function(req, response) {
-  var data = req.body;
-  var res = {
-    success: false,
-    error: null,
-    content: null
-  }
-  // create
-  users.save(data, function(err, result) {
-    if (err === null) {
-      res.success = true
-      res.content = {
-        '@rid': result['@rid']
-      };
-    } else {
-      res.error = err;
-    }
-    response.end(JSON.stringify(res));
-  });
-}
 
-exports.configure = function (app) {
-  app.get('/user/_current', current);
-  app.post('/user/register', register);
+
+exports.configure = function(app) {
+  //app.get('/user/_current', current);
+  //app.post('/user/register', register);
 
 }

@@ -16,7 +16,7 @@ exports.configurePassport = function(passport) {
       if (err == null) {
         done(null, result);
       } else {
-        done(null, false);
+        done(null, false, {message : 'Le compte n\'existe pas ou le mot de passe est invalide'});
       }
     });
   }));

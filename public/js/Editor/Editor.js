@@ -5,7 +5,7 @@ OpenLayers.Editor = OpenLayers.Class({
   createTrackButton : null,
   events : null,
 
-  initialize : function (map) {
+  initialize : function (map, user) {
     this.map = map;
     this.map.editor = this;
 
