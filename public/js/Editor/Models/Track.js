@@ -1,46 +1,41 @@
-OpenLayers.Editor.Track = OpenLayers.Class(OpenLayers.Editor.Model, {
+OpenLayers.Editor.Models.Track = OpenLayers.Class(OpenLayers.Editor.Models.Base, {
 
   defaults: {
-    rid: null,
-    title: null,
-
-    styleMap: null,
-    strokeColor: null,
-
-    createdAt: null,
-    updatedAt: null,
-
+    title: 'Sans titre',
+    //styleMap: null,
+    strokeColor: '#51b749',
     len: null,
+    gpx : null,
     dplus: null,
     dminus: null,
+    owner : null
   },
-
-
 
   __vectorLayer: null,
 
   initialize: function(options) {
 
-
-    options = options || {};
-    options.rid =  options['@rid'] || null;
-    options.title =  options.title || 'Sans titre';
-    options.strokeColor =  options.strokeColor || '#51b749';
-    options.len = options.len || null;
-    options.dplus =  options.dplus || null;
-    options.dminus =  options.dminus || null;
-    if (options.createdAt) {
-      options.createdAt =  new Date(Date.parse(options.createdAt));
-    }
-    if (options.updatedAt) {
-      options.updatedAt = new Date(Date.parse(options.updatedAt));
-    }
-    options.gpx = options.gpx || null;
-
-    OpenLayers.Editor.Model.prototype.initialize.apply(this, [options]);
+    OpenLayers.Editor.Models.Base.prototype.initialize.apply(this, ['track', options]);
 
     OpenLayers.Editor.TrackCollection.getInstance().add(this);
 
+  },
+
+
+  serialize: function() {
+    var o = OpenLayers.Editor.Models.Base.prototype.serialize.apply(this);
+    o.title = this.get('title');
+    o.strokeColor = this.get('strokeColor');
+    o.len = this.get('len');
+    o.dminus = this.get('dminus');
+    o.dplus = this.get('dplus');
+    o.owner = this.get('owner');
+    if (this.__vectorLayer !== null) {
+      o.gpx = this.toGPX();
+    } else {
+      o.gpx = this.get('gpx');
+    }
+    return o;
   },
 
   hasVectorLayerLoaded: function() {
@@ -51,7 +46,7 @@ OpenLayers.Editor.Track = OpenLayers.Class(OpenLayers.Editor.Model, {
     if (this.__vectorLayer === null) {
       this.__vectorLayer = new OpenLayers.Layer.Vector();
 
-      if (this.get('styleMap') === null) {
+      //if (this.get('styleMap') === null) {
         this.__vectorLayer.styleMap = new OpenLayers.StyleMap({
           'default': new OpenLayers.Style({
             fillColor: this.get('strokeColor'),
@@ -77,7 +72,7 @@ OpenLayers.Editor.Track = OpenLayers.Class(OpenLayers.Editor.Model, {
             pointRadius: 5
           })
         });
-      }
+      //}
 
       if (this.get('gpx') !== null) {
         var options = {
@@ -102,24 +97,21 @@ OpenLayers.Editor.Track = OpenLayers.Class(OpenLayers.Editor.Model, {
     return (new OpenLayers.Editor.GPX(options)).write(this.getVectorLayer().features);
   },
 
-  serialize: function() {
-    var o = {};
-    o.title = this.get('title');
-    o.strokeColor = this.get('strokeColor');
-    o.len = this.get('len');
-    o.dminus = this.get('dminus');
-    o.dplus = this.get('dplus');
-    o['@rid'] = this.get('rid');
-    if (this.__vectorLayer !== null) {
-      o.gpx = this.toGPX();
-    } else {
-      o.gpx = this.get('gpx');
+  redraw: function() {
+    if (this.hasVectorLayerLoaded()) {
+      this.__vectorLayer.styleMap.styles.
+      default.defaultStyle.strokeColor = this.get('strokeColor');
+      this.__vectorLayer.styleMap.styles.select.defaultStyle.strokeColor = this.get('strokeColor');
+      this.__vectorLayer.styleMap.styles.temporary.defaultStyle.strokeColor = this.get('strokeColor');
+
+      this.__vectorLayer.styleMap.styles.
+      default.defaultStyle.fillColor = this.get('strokeColor');
+      this.__vectorLayer.styleMap.styles.select.defaultStyle.fillColor = this.get('strokeColor');
+      this.__vectorLayer.styleMap.styles.temporary.defaultStyle.fillColor = this.get('strokeColor');
+
+
+      this.__vectorLayer.redraw();
     }
-
-    o.createdAt = this.get('createdAt').toJSON();
-    o.updatedAt = this.get('updatedAt').toJSON();
-
-    return o;
   },
 
   refreshMetaData: function(callback, force) {
@@ -162,8 +154,6 @@ OpenLayers.Editor.Track = OpenLayers.Class(OpenLayers.Editor.Model, {
       return doRequest;
     }
 
-
-    //locations=40.714728,-73.998672|-34.397,150.644
     this.getVectorLayer().features.forEach(function(feature) {
       if (feature.geometry.CLASS_NAME == "OpenLayers.Geometry.LineString") {
         feature.geometry.components.forEach(function(p) {
@@ -215,7 +205,7 @@ OpenLayers.Editor.Track = OpenLayers.Class(OpenLayers.Editor.Model, {
           }
         });
         self.set('len', Math.round(data.len * 10) / 10);
-        self.set('dplus',data.dplus);
+        self.set('dplus', data.dplus);
         self.set('dminus', data.dminus);
         callback(null, self)
       } else {
@@ -233,141 +223,28 @@ OpenLayers.Editor.Track = OpenLayers.Class(OpenLayers.Editor.Model, {
 
   remove: function(callback) {
 
-    if (typeof(callback) === 'undefined') {
-      callback = function () {};
-    }
+    OpenLayers.Editor.Models.Base.prototype.remove.apply(this, [OpenLayers.Function.bind(function(err, obj) {
+      if (err === null) {
+        if (this.hasVectorLayerLoaded()) {
+          this.__vectorLayer.destroy();
+          this.__vectorLayer = null;
+        }
+        OpenLayers.Editor.TrackCollection.getInstance().remove(this);
+        if (typeof(callback) !== 'undefined') {
+          callback(err, obj);
+        }
 
-    if (this.hasVectorLayerLoaded()) {
-      this.__vectorLayer.destroy();
-    }
-    OpenLayers.Editor.TrackCollection.getInstance().remove(this);
-
-    if (this.get('rid') == null) {
-      callback(null, this);
-      return
-    }
-
-    $.ajax({
-      url: "/track/remove",
-      type: 'POST',
-      context: this,
-      contentType: 'application/json; charset=UTF-8',
-      data: JSON.stringify({
-        '@rid': this.get('rid')
-      })
-    }).done(function(result) {
-      if (callback) {
-        callback(null, this);
       }
-    }).fail(function() {
-      if (callback) {
-        callback('La suppression a échouée');
-      }
-    });
+    }, this)]);
   },
 
-  redraw: function() {
-    if (this.hasVectorLayerLoaded()) {
-      this.__vectorLayer.styleMap.styles.
-      default.defaultStyle.strokeColor = this.get('strokeColor');
-      this.__vectorLayer.styleMap.styles.select.defaultStyle.strokeColor = this.get('strokeColor');
-      this.__vectorLayer.styleMap.styles.temporary.defaultStyle.strokeColor = this.get('strokeColor');
-
-      this.__vectorLayer.styleMap.styles.
-      default.defaultStyle.fillColor = this.get('strokeColor');
-      this.__vectorLayer.styleMap.styles.select.defaultStyle.fillColor = this.get('strokeColor');
-      this.__vectorLayer.styleMap.styles.temporary.defaultStyle.fillColor = this.get('strokeColor');
-
-
-      this.__vectorLayer.redraw();
-    }
-  },
-
-  save: function(callback) {
-
-    if (typeof(callback) == 'undefined') {
-      callback = function () {};
-    }
-
-    this.set('updatedAt', new Date());
-
-    if (this.get('createdAt') === null) {
-      this.set('createdAt',this.get('updatedAt'));
-    }
-
-
-    this.msg = Messenger().run({
-      errorMessage: "L'enregistrement a échoué",
-      successMessage: "L'enregistrement a réussi",
-      action: OpenLayers.Function.bind(function(opts) {
-
-        this.refreshMetaData(OpenLayers.Function.bind(function(err) {
-
-          if (err !== null) {
-
-            opts.error({
-              status: 500,
-              readyState: 0,
-              responseText: 0,
-            });
-            return;
-          }
-
-          this._save(OpenLayers.Function.bind(function(err) {
-
-            if (err === null) {
-              opts.success();
-              callback(null);
-            } else {
-              opts.error({
-                status: 500,
-                readyState: 0,
-                responseText: 0
-              });
-            }
-
-          }, this));
-        }, this), false);
-
-      }, this)
-    });
-
-
-    /*
-    this.refreshMetaData(OpenLayers.Function.bind(function (err) {
-      this._save(callback);
-    }, this), false);
-    */
-
-
-
-  },
-
-  _save: function(callback) {
-    $.ajax({
-      url: "/track",
-      type: 'POST',
-      context: this,
-      contentType: 'application/json; charset=UTF-8',
-      data: JSON.stringify(this.serialize())
-    }).done(function(result) {
-      result = JSON.parse(result);
-      if (result.success == true) {
-        this.set('rid',result.content['@rid']);
-      }
-      this.set('hasChanges', false)
-
-      if (callback) {
-        callback(result.success ? null : result.error, this);
-      }
-    }).fail(function() {
-      if (callback) {
-        callback('La sauvegarde a échouée');
-      }
-    });
+  _beforeSave: function(callback, opts) {
+    this.refreshMetaData(OpenLayers.Function.bind(function(err) {
+      callback(err, null, opts);
+    }));
   },
 
 
-  CLASS_NAME: 'OpenLayers.Editor.Track'
+  CLASS_NAME: 'OpenLayers.Editor.Models.Track'
 
 });

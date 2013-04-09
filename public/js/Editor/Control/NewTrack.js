@@ -26,7 +26,7 @@ OpenLayers.Editor.Control.NewTrack = OpenLayers.Class(OpenLayers.Editor.Control.
     },
 
     startEditing: function () {
-        this.editor.startEditing(new OpenLayers.Editor.Track());
+        this.editor.startEditing(new OpenLayers.Editor.Models.Track());
     },
 
     CLASS_NAME: 'OpenLayers.Editor.Control.NewTrack'

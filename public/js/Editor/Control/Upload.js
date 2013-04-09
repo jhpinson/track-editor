@@ -31,7 +31,7 @@ OpenLayers.Editor.Control.Upload = OpenLayers.Class(OpenLayers.Editor.Control.In
       dataType: 'json',
       url : '/track/upload',
       done: function(e, data) {
-          var track = new OpenLayers.Editor.Track(data.result);
+          var track = new OpenLayers.Editor.Models.Track(data.result);
          editor.showTrack(track);
          track.save();
       }

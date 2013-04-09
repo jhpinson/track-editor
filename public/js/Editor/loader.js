@@ -6,13 +6,20 @@
 
     var files = [
 
-        'Point.js',
+        'Geometry/Point.js',
         'Editor.js',
-        'Model.js',
         'GPX.js',
-        'LocalStorage.js',
-        'Track.js',
+
+        'Models/__init__.js',
+        'Models/Base.js',
+        'Models/User.js',
+        'Models/Track.js',
+
+        //'LocalStorage.js',
+
         'TrackCollection.js',
+
+        'Control/__init__.js',
         'Control/Panel.js',
         'Control/InlineHTML.js',
         'Control/Separator.js',

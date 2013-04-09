@@ -27,7 +27,6 @@ OpenLayers.Editor.Control.DrawPath = OpenLayers.Class(OpenLayers.Control.DrawFea
 
   deactivate: function() {
     try {
-      console.debug('finishSketch')
       this.finishSketch();
     } catch (e) {
 

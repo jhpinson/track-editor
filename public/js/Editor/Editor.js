@@ -5,11 +5,22 @@ OpenLayers.Editor = OpenLayers.Class({
   createTrackButton : null,
   events : null,
 
+  authenticatedUser : null,
+
   initialize : function (map, user) {
     this.map = map;
     this.map.editor = this;
 
     this.events = new OpenLayers.Events(this);
+
+
+    this.setUser(new OpenLayers.Editor.Models.User(user))
+
+  },
+
+  setUser : function (user) {
+
+    this.authenticatedUser = user;
 
     OpenLayers.Editor.TrackCollection.getInstance();
 
@@ -32,9 +43,6 @@ OpenLayers.Editor = OpenLayers.Class({
     var growl = OpenLayers.Editor.Control.Growl.getInstance();
     this.map.addControl(growl);
     growl.activate();
-
-    this.map.addControl(OpenLayers.Editor.Control.Mask.getInstance());
-
   },
 
   showTrack :function (track) {
@@ -98,11 +106,4 @@ OpenLayers.Editor = OpenLayers.Class({
 
 });
 
-OpenLayers.Editor.Control = OpenLayers.Class(OpenLayers.Control, {
 
-    initialize: function (options) {
-        OpenLayers.Control.prototype.initialize.apply(this, [options]);
-    },
-
-    CLASS_NAME: 'OpenLayers.Editor.Control'
-});

@@ -17,8 +17,8 @@ OpenLayers.Editor.TrackCollection = OpenLayers.Class({
       context: this,
       contentType: 'application/json; charset=UTF-8'
     }).success(function(results) {
-      JSON.parse(results).forEach(function (data) {
-        new OpenLayers.Editor.Track(data);
+      results.forEach(function (data) {
+        new OpenLayers.Editor.Models.Track(data);
       })
     });
 

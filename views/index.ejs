@@ -55,7 +55,7 @@
     </style>
 
     <script type="text/javascript">
-      var map, editeur;
+      var map, editor;
 
       function init (user) {
         map = new OpenLayers.Map ('map', {
@@ -65,7 +65,7 @@
           controls : [
           new OpenLayers.Control.Navigation(),
             new OpenLayers.Control.PanZoomBar (),
-          new OpenLayers.Control.LayerSwitcher(),
+            //new OpenLayers.Control.LayerSwitcher(),
           ],
           layers: [
             new OpenLayers.Layer.Google.Terrain      ('Google'),
@@ -84,9 +84,11 @@
             .transform (map.displayProjection, map.getProjectionObject()),
           10
         );
-
+        document.map = map;
         var editor = new OpenLayers.Editor(map, user);
-
+        $(document).on('authenticated', function (event, user) {
+          editor.setUser(user);
+        });
         // geolocation control
         var geolocate = new OpenLayers.Control.Geolocate({
             bind: true,

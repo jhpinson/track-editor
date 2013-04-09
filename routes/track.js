@@ -10,20 +10,25 @@ var save = function (req, response) {
   }
 
   var data = req.body;
+
+  if (data.owner === null) {
+    data.owner = req.user['@rid'];
+  }
+
   var res = {success : false, error : null, content : null}
   tracks.save(data, function (err, result) {
     if (err === null) {
         res.success = true
-        res.content = {'@rid' :  result['@rid']};
+        res.content = result;
       } else {
         res.error = err;
       }
-      response.end(JSON.stringify(res));
+      response.send(res);
   });
 }
 
 
-var remove = function (req, res) {
+var remove = function (req, response) {
   if (typeof(req.user) == 'undefined')  {
     response.statusCode = 401;
     response.end();
@@ -32,20 +37,20 @@ var remove = function (req, res) {
 
   var data = req.body;
   tracks.remove(data, function (err) {
-    res.end(JSON.stringify({success:(err === null)}));
+    response.send({success:(err === null)});
   })
 }
 
-var list = function(req, res){
+var list = function(req, response){
 
   if (typeof(req.user) == 'undefined')  {
     response.statusCode = 401;
     response.end();
     return;
   }
-
-  tracks.filter({}, function (err, results) {
-    res.end(JSON.stringify(results));
+  // owner : req.user['@rid']
+  tracks.filter({owner : req.user['@rid']}, function (err, results) {
+    response.send(results);
   })
 };
 
@@ -69,10 +74,10 @@ var gpx = function (req, res) {
     });*/
 }
 
-var upload = function (req, res) {
+var upload = function (req, response) {
 
   fs.readFile(req.files.files[0].path, 'utf-8', function (err, data) {
-    res.end(JSON.stringify({title : req.files.files[0].name, gpx : data}));
+    response.send({title : req.files.files[0].name, gpx : data});
   });
 }
 
