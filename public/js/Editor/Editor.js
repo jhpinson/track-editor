@@ -1,9 +1,11 @@
 OpenLayers.Editor = OpenLayers.Class({
 
+  toolbox : null,
 
   activeEditorPanel : null,
   createTrackButton : null,
   events : null,
+  map : null,
 
   authenticatedUser : null,
 
@@ -24,21 +26,14 @@ OpenLayers.Editor = OpenLayers.Class({
 
     OpenLayers.Editor.TrackCollection.getInstance();
 
-    this.createTrackButton = new OpenLayers.Editor.Control.NewTrack(this);
-    this.map.addControl(this.createTrackButton);
-    this.createTrackButton.activate();
 
-    var myTracks = new OpenLayers.Editor.Control.MyTracks(this);
-    this.map.addControl(myTracks);
-    myTracks.activate();
+    this.toolbox = new OpenLayers.Editor.Control.ToolBox(this);
+    this.map.addControl(this.toolbox);
+    this.toolbox.activate();
 
-    var layerSwitcher = new OpenLayers.Editor.Control.LayerSwitcher(this);
-    this.map.addControl(layerSwitcher);
-    layerSwitcher.activate();
-
-    var uploadButton = new OpenLayers.Editor.Control.Upload(this);
-    this.map.addControl(uploadButton);
-    uploadButton.activate();
+    var toolbar = new OpenLayers.Editor.Control.PanelMapToolBar(this);
+    this.map.addControl(toolbar);
+    toolbar.activate();
 
     var growl = OpenLayers.Editor.Control.Growl.getInstance();
     this.map.addControl(growl);
@@ -69,7 +64,9 @@ OpenLayers.Editor = OpenLayers.Class({
   },
 
   isEditingTrack : function (track) {
-    return this.activeEditorPanel !== null && this.activeEditorPanel.track === track;
+    track = track || null;
+    return this.toolbox.isEditingTrack(track);
+    //return this.activeEditorPanel !== null && this.activeEditorPanel.track === track;
   },
 
   isTrackShown : function (track) {
@@ -78,14 +75,7 @@ OpenLayers.Editor = OpenLayers.Class({
 
   startEditing : function (track) {
 
-        if (this.activeEditorPanel !== null) {
-          this.stopEditing();
-        }
-
-        this.createTrackButton.deactivate();
-        this.activeEditorPanel = new OpenLayers.Editor.Control.PanelEditTrack(this, track);
-
-
+    this.events.triggerEvent('startEditing', track);
 
     },
 
@@ -93,13 +83,8 @@ OpenLayers.Editor = OpenLayers.Class({
 
     stopEditing : function () {
 
-      var track = this.activeEditorPanel.track;
+      this.events.triggerEvent('stopEditing');
 
-      this.activeEditorPanel.deactivate();
-      this.activeEditorPanel.destroy();
-      this.activeEditorPanel = null;
-
-      this.createTrackButton.activate();
     },
 
     CLASS_NAME: 'OpenLayers.Editor'

@@ -2,8 +2,8 @@ OpenLayers.Editor.Control.InlineHTML = OpenLayers.Class(OpenLayers.Control, {
 
   type: OpenLayers.Control.TYPE_INLINE_HTML,
 
-  initialize: function(editor) {
-    OpenLayers.Control.prototype.initialize.apply(this);
+  initialize: function(editor, options) {
+    OpenLayers.Control.prototype.initialize.apply(this, options);
     this.displayClass += ' inline-html-control';
     if (editor) {
       editor.events.register('showInlineHTML', this, this.onShowInlineHTML);

@@ -8,6 +8,7 @@ OpenLayers.Editor.Control.DrawPath = OpenLayers.Class(OpenLayers.Control.DrawFea
 
   title: 'Créer un segment',
   bootstrapIcon: 'icon-pencil',
+  boostrapIconOnly : true,
 
   /**
    * Constructor: OpenLayers.Editor.Control.DrawPath

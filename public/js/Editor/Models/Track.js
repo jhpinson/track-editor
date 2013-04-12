@@ -4,10 +4,10 @@ OpenLayers.Editor.Models.Track = OpenLayers.Class(OpenLayers.Editor.Models.Base,
     title: 'Sans titre',
     //styleMap: null,
     strokeColor: '#51b749',
-    len: null,
+    len: 0,
     gpx : null,
-    dplus: null,
-    dminus: null,
+    dplus: 0,
+    dminus: 0,
     owner : null
   },
 

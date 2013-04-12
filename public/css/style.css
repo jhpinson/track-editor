@@ -17,55 +17,70 @@
   width: 2px;
   background-color: #c4c4c4;
 }
-.olEditorControlPanelEditTrack {
+.toolbox {
   position: absolute;
   right: 8px;
   top: 8px;
   cursor: pointer;
+  width: 150px;
 }
-.olEditorControlPanelEditTrack > div {
-  background-repeat: no-repeat;
-  background-position: center;
-  margin: 0 4px;
+ul.nav li:hover {
+  background-color: transparent;
+}
+ul.nav a:hover {
+  background-color: transparent;
+}
+.olEditorControlPanelEditTrack {
+  cursor: pointer;
+  width: 100%;
+  position: relative;
+  box-sizing: border-box;
+}
+.olEditorControlPanelEditTrack .title-color,
+.olEditorControlPanelEditTrack .tools {
+  margin-bottom: 5px;
+  width: 100%;
+  position: relative;
+  display: inline-block;
+}
+.olEditorControlPanelEditTrack .title-color > div,
+.olEditorControlPanelEditTrack .tools > div {
   float: left;
 }
-.olEditorControlNewTrack {
+.olEditorControlPanelEditTrack .tools button {
+  height: 28px;
+  margin-right: 2px;
+}
+.olEditorControlGeoLoc {
+  box-sizing: border-box;
+}
+.olEditorControlGeoLoc .add-on {
+  height: 12px;
+  padding: 6px 2px 3px 2px;
+  line-height: 10px;
+}
+.olEditorControlGeoLoc input {
+  width: 120px;
+  height: 23px;
+}
+.olEditorControlPanelMapToolBar {
   position: absolute;
-  display: block;
-  right: 8px;
+  left: 8px;
   top: 8px;
 }
-.olEditorControlUpload {
-  position: absolute;
+.olEditorControlPanelMapToolBar > div {
   display: block;
-  top: 8px;
-  left: 250px;
+  float: left;
+  margin-right: 5px;
 }
-.olEditorControlMyTracks,
-.olEditorControlLayerSwitcher {
-  position: absolute;
-  display: block;
-  top: 8px;
-}
-.olEditorControlMyTracks.olEditorControlMyTracks,
-.olEditorControlLayerSwitcher.olEditorControlMyTracks {
-  left: 50px;
-}
-.olEditorControlMyTracks.olEditorControlMyTracks > ul li div,
-.olEditorControlLayerSwitcher.olEditorControlMyTracks > ul li div {
-  float: right;
-}
-.olEditorControlMyTracks.olEditorControlMyTracks > ul li div a,
-.olEditorControlLayerSwitcher.olEditorControlMyTracks > ul li div a {
-  margin-left: 5px;
-}
-.olEditorControlMyTracks.olEditorControlLayerSwitcher,
-.olEditorControlLayerSwitcher.olEditorControlLayerSwitcher {
-  left: 150px;
-}
-.olEditorControlMyTracks > ul,
-.olEditorControlLayerSwitcher > ul {
+.olEditorControlPanelMapToolBar ul {
   list-style-type: none;
   margin-top: 10px;
   margin-left: 0;
+}
+.olEditorControlPanelMapToolBar.olEditorControlMyTracks > ul li div {
+  float: right;
+}
+.olEditorControlPanelMapToolBar.olEditorControlMyTracks > ul li div a {
+  margin-left: 5px;
 }

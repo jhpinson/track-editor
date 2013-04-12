@@ -20,22 +20,29 @@
         'TrackCollection.js',
 
         'Control/__init__.js',
+
         'Control/Panel.js',
         'Control/InlineHTML.js',
+        'Control/ButtonPopOver.js',
+
         'Control/Separator.js',
-        'Control/EditorPanel.js',
+        'Control/ToolBox.js',
         'Control/DrawPath.js',
         'Control/StopEditing.js',
         'Control/NewTrack.js',
+        //'Control/NewTrackButton.js',
         'Control/MyTracks.js',
         'Control/LayerSwitcher.js',
         'Control/PanelEditTrack.js',
         'Control/TrackTitle.js',
         'Control/ColorPicker.js',
         'Control/Save.js',
-        'Control/Upload.js',
+        //'Control/Upload.js',
         'Control/Growl.js',
-        'Control/Mask.js',
+        'Control/GeoLoc.js',
+        'Control/Zoom.js',
+        'Control/PanelMapToolBar.js',
+        'Control/Stats.js',
 
     ];
 

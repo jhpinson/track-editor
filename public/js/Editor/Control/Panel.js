@@ -4,7 +4,7 @@ OpenLayers.Editor.Control.Panel = OpenLayers.Class(OpenLayers.Control.Panel, {
 
   draw: function(px) {
     var div = OpenLayers.Control.Panel.prototype.draw.apply(this, [px]);
-    $(div).addClass('well well-small');
+    //$(div).addClass('well well-small');
     return div;
   },
 
@@ -52,7 +52,7 @@ OpenLayers.Editor.Control.Panel = OpenLayers.Class(OpenLayers.Control.Panel, {
   },
 
   createControlMarkup: function(control) {
-    var $markup = $('<div><button class="btn btn-mini" type="button" data-toggle="button"> ' + (control.bootstrapIcon ? ' <i class="' + control.bootstrapIcon + '"></i>' : '') + ' ' + control.title + '</button></div>');
+    var $markup = $('<div><button class="btn btn-mini '+ (control.boostrapIconOnly === true ? 'tool' : '' ) +'" type="button" data-toggle="button"> ' + (control.bootstrapIcon ? ' <i class="' + control.bootstrapIcon + '"></i>' : '') + ((control.boostrapIconOnly !== true) ? (' ' + control.title ) : '') + '</button></div>');
 
     if (control.configureMarkup) {
       control.configureMarkup($markup);

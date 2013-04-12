@@ -4,6 +4,8 @@ OpenLayers.Editor.Control.Save = OpenLayers.Class(OpenLayers.Control.Button, {
   track: null,
   title: 'Sauvegarder',
   bootstrapIcon: 'icon-ok',
+  boostrapIconOnly : true,
+
   $markup: null,
 
   beforeSave: null,

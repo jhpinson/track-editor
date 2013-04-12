@@ -2,7 +2,8 @@ OpenLayers.Editor.Control.StopEditing = OpenLayers.Class(OpenLayers.Control.Butt
 
     editor: null,
     track : null,
-    bootstrapIcon : 'icon-ok',
+    bootstrapIcon : 'icon-stop',
+    boostrapIconOnly : true,
 
     initialize: function (editor, track) {
         this.editor = editor;

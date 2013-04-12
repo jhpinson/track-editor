@@ -4,11 +4,11 @@ OpenLayers.Editor.Control.ColorPicker = OpenLayers.Class(OpenLayers.Editor.Contr
   track: null,
   $picker : null,
 
-  initialize: function(editor, track) {
+  initialize: function(editor, track, options) {
     this.editor = editor;
     this.track = track;
 
-    OpenLayers.Editor.Control.InlineHTML.prototype.initialize.apply(this, [editor]);
+    OpenLayers.Editor.Control.InlineHTML.prototype.initialize.apply(this, [editor, options]);
 
   },
 

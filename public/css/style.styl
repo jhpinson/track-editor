@@ -19,50 +19,75 @@
   width 2px
   background-color  rgb(196, 196, 196)
 
-.olEditorControlPanelEditTrack
-
-    position absolute
-    right 8px
-    top 8px
-    cursor pointer
-    & > div
-      background-repeat no-repeat
-      background-position center
-      margin 0 4px
-      float left
-
-
-
-.olEditorControlNewTrack
+.toolbox
   position absolute
-  display block
   right 8px
   top 8px
+  cursor pointer
+  width 150px
 
-.olEditorControlUpload
+ul.nav
+  li:hover
+    background-color transparent
+  a:hover
+    background-color transparent
+
+.olEditorControlPanelEditTrack
+
+    cursor pointer
+    width 100%
+    position relative
+    box-sizing border-box
+
+    .title-color, .tools
+      margin-bottom 5px
+      width 100%
+      position relative
+      display inline-block
+      & > div
+        float left
+
+    .tools
+      button
+        height 28px
+        margin-right 2px
+
+  .olEditorControlGeoLoc
+    box-sizing border-box
+    .add-on
+      height 12px
+      padding 6px 2px 3px 2px
+      line-height 10px
+    input
+      width 120px
+      height 23px
+
+
+
+
+
+.olEditorControlPanelMapToolBar
   position absolute
-  display block
+  left 8px
   top 8px
-  left 250px
-.olEditorControlMyTracks, .olEditorControlLayerSwitcher
+  & > div
+    display block
+    //vertical-align top
+    float left
+    margin-right 5px
+
+  ul
+    list-style-type none
+    margin-top 10px
+    margin-left 0
 
   &.olEditorControlMyTracks
-    left 50px
     > ul
       li
         div
           float right
           a
             margin-left 5px
-  &.olEditorControlLayerSwitcher
-    left 150px
 
-  position absolute
-  display block
 
-  top 8px
 
-  > ul
-    list-style-type none
-    margin-top 10px
-    margin-left 0
